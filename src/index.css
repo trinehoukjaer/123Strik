@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-warm-50: #fdf8f6;
+  --color-warm-100: #f2e8e5;
+  --color-warm-200: #eaddd7;
+  --color-warm-300: #e0cec7;
+  --color-warm-400: #d2bab0;
+  --color-warm-500: #bfa094;
+  --color-warm-600: #a18072;
+  --color-warm-700: #977669;
+  --color-warm-800: #846358;
+  --color-warm-900: #43302b;
+
+  --color-nordic-50: #f0f4f8;
+  --color-nordic-100: #d9e2ec;
+  --color-nordic-200: #bcccdc;
+  --color-nordic-300: #9fb3c8;
+  --color-nordic-400: #829ab1;
+  --color-nordic-500: #627d98;
+  --color-nordic-600: #486581;
+  --color-nordic-700: #334e68;
+  --color-nordic-800: #243b53;
+  --color-nordic-900: #102a43;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-warm-50);
+  color: var(--color-nordic-900);
+  min-height: 100dvh;
+}
+
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}

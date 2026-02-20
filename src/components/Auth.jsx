@@ -64,7 +64,7 @@ export default function Auth() {
         {/* Logo area */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🧶</div>
-          <h1 className="text-3xl font-bold text-nordic-800 dark:text-nordic-100">StrikkeApp</h1>
+          <h1 className="text-3xl font-bold text-nordic-800 dark:text-nordic-100">123Strik</h1>
           <p className="text-nordic-500 dark:text-nordic-400 mt-1">Hold styr på dine strikkeprojekter</p>
         </div>
 

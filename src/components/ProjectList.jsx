@@ -77,8 +77,6 @@ function ProjectCard({ project, onClick }) {
   )
 }
 
-const CATEGORIES = ['Sweatre', 'Cardigans', 'Tilbehør', 'Børnetøj', 'Interiør', 'Andet']
-
 export default function ProjectList({ userId, onSelectProject, onNewProject }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -128,9 +126,9 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
     )
   }
 
-  const usedCategories = CATEGORIES.filter((c) =>
-    projects.some((p) => p.category === c)
-  )
+  const usedCategories = [...new Set(
+    projects.map((p) => p.category).filter(Boolean)
+  )].sort()
 
   const filtered = filter
     ? projects.filter((p) => p.category === filter)

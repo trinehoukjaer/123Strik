@@ -1,13 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 export default function NewProject({ userId, onCreated, onCancel }) {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
   const [totalRows, setTotalRows] = useState('')
+  const [existingCategories, setExistingCategories] = useState([])
   const [pdfFile, setPdfFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from('knitting_projects')
+        .select('category')
+        .eq('user_id', userId)
+        .not('category', 'is', null)
+      if (data) {
+        const unique = [...new Set(data.map((d) => d.category))].sort()
+        setExistingCategories(unique)
+      }
+    }
+    fetchCategories()
+  }, [userId])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -98,25 +114,24 @@ export default function NewProject({ userId, onCreated, onCancel }) {
 
         <div>
           <label className="block text-sm font-medium text-nordic-700 dark:text-nordic-300 mb-1">
-            Kategori
+            Kategori (valgfrit)
           </label>
-          <select
+          <input
+            type="text"
+            list="category-list"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-warm-200 dark:border-night-500
                        dark:bg-night-800 dark:text-nordic-100
                        focus:outline-none focus:ring-2 focus:ring-warm-400 dark:focus:ring-nordic-500 text-lg
-                       appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%23829ab1%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]
-                       bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat"
-          >
-            <option value="">Vælg kategori (valgfrit)</option>
-            <option value="Sweatre">Sweatre</option>
-            <option value="Cardigans">Cardigans</option>
-            <option value="Tilbehør">Tilbehør</option>
-            <option value="Børnetøj">Børnetøj</option>
-            <option value="Interiør">Interiør</option>
-            <option value="Andet">Andet</option>
-          </select>
+                       dark:placeholder-nordic-500"
+            placeholder="Skriv eller vælg kategori"
+          />
+          <datalist id="category-list">
+            {existingCategories.map((cat) => (
+              <option key={cat} value={cat} />
+            ))}
+          </datalist>
         </div>
 
         <div>

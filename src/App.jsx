@@ -81,7 +81,7 @@ function AppContent() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🧶</span>
-            <h1 className="text-xl font-bold text-nordic-800 dark:text-nordic-100">StrikkeApp</h1>
+            <h1 className="text-xl font-bold text-nordic-800 dark:text-nordic-100">123Strik</h1>
           </div>
           <div className="flex items-center gap-1">
             <ThemeToggle />

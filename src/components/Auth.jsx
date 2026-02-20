@@ -8,21 +8,33 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [signUpSuccess, setSignUpSuccess] = useState(false)
   const { dark, toggle } = useTheme()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setMessage('')
+    setSignUpSuccess(false)
 
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password })
-
-    if (error) {
-      setMessage(error.message)
-    } else if (isSignUp) {
-      setMessage('Tjek din email for bekræftelseslink!')
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: 'https://123strik.vercel.app',
+        },
+      })
+      if (error) {
+        setMessage(error.message)
+      } else {
+        setSignUpSuccess(true)
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setMessage(error.message)
+      }
     }
     setLoading(false)
   }
@@ -86,29 +98,47 @@ export default function Auth() {
           </div>
 
           {message && (
-            <p className={`text-sm ${message.includes('Tjek') ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
-              {message}
-            </p>
+            <p className="text-sm text-red-500 dark:text-red-400">{message}</p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl bg-warm-500 hover:bg-warm-600
-                       dark:bg-nordic-600 dark:hover:bg-nordic-500
-                       text-white font-semibold text-lg transition-colors
-                       disabled:opacity-50"
-          >
-            {loading ? 'Vent...' : isSignUp ? 'Opret konto' : 'Log ind'}
-          </button>
+          {signUpSuccess ? (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center space-y-2">
+              <p className="text-green-700 dark:text-green-400 font-semibold">
+                Tjek din e-mail for at bekræfte din konto
+              </p>
+              <p className="text-green-600 dark:text-green-500 text-sm">
+                Vi har sendt et link til <strong>{email}</strong>. Klik på linket for at aktivere din konto og logge ind.
+              </p>
+              <button
+                type="button"
+                onClick={() => { setSignUpSuccess(false); setIsSignUp(false) }}
+                className="mt-2 text-sm text-nordic-500 hover:text-nordic-700 dark:text-nordic-400 dark:hover:text-nordic-200"
+              >
+                Gå til log ind
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-warm-500 hover:bg-warm-600
+                           dark:bg-nordic-600 dark:hover:bg-nordic-500
+                           text-white font-semibold text-lg transition-colors
+                           disabled:opacity-50"
+              >
+                {loading ? 'Vent...' : isSignUp ? 'Opret konto' : 'Log ind'}
+              </button>
 
-          <button
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="w-full text-sm text-nordic-500 hover:text-nordic-700 dark:text-nordic-400 dark:hover:text-nordic-200"
-          >
-            {isSignUp ? 'Har allerede en konto? Log ind' : 'Ny bruger? Opret konto'}
-          </button>
+              <button
+                type="button"
+                onClick={() => { setIsSignUp(!isSignUp); setMessage(''); setSignUpSuccess(false) }}
+                className="w-full text-sm text-nordic-500 hover:text-nordic-700 dark:text-nordic-400 dark:hover:text-nordic-200"
+              >
+                {isSignUp ? 'Har allerede en konto? Log ind' : 'Ny bruger? Opret konto'}
+              </button>
+            </>
+          )}
         </form>
       </div>
     </div>

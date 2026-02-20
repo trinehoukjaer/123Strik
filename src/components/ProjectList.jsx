@@ -45,10 +45,18 @@ function ProjectCard({ project, onClick }) {
             </h3>
             <StatusBadge status={project.status || 'Oprettet'} />
           </div>
-          <p className="text-sm text-nordic-500 dark:text-nordic-400">
-            Pind {project.current_row}
-            {project.total_rows ? ` af ${project.total_rows}` : ''}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-nordic-500 dark:text-nordic-400">
+              Pind {project.current_row}
+              {project.total_rows ? ` af ${project.total_rows}` : ''}
+            </p>
+            {project.category && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-nordic-50 text-nordic-500
+                               dark:bg-night-600 dark:text-nordic-400 font-medium">
+                {project.category}
+              </span>
+            )}
+          </div>
           {project.updated_at && (
             <p className="text-xs text-nordic-400 dark:text-nordic-500 mt-1">
               Sidst strikket {new Date(project.updated_at).toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -69,9 +77,12 @@ function ProjectCard({ project, onClick }) {
   )
 }
 
+const CATEGORIES = ['Sweatre', 'Cardigans', 'Tilbehør', 'Børnetøj', 'Interiør', 'Andet']
+
 export default function ProjectList({ userId, onSelectProject, onNewProject }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState(null)
 
   useEffect(() => {
     fetchProjects()
@@ -117,8 +128,16 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
     )
   }
 
-  const active = projects.filter((p) => (p.status || 'Oprettet') !== 'Færdig')
-  const done = projects.filter((p) => p.status === 'Færdig')
+  const usedCategories = CATEGORIES.filter((c) =>
+    projects.some((p) => p.category === c)
+  )
+
+  const filtered = filter
+    ? projects.filter((p) => p.category === filter)
+    : projects
+
+  const active = filtered.filter((p) => (p.status || 'Oprettet') !== 'Færdig')
+  const done = filtered.filter((p) => p.status === 'Færdig')
 
   return (
     <div>
@@ -131,6 +150,33 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
       >
         + Nyt projekt
       </button>
+
+      {/* Kategori-filter */}
+      {usedCategories.length > 0 && (
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <button
+            onClick={() => setFilter(null)}
+            className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+                       ${!filter
+                         ? 'bg-nordic-600 text-white dark:bg-nordic-500'
+                         : 'bg-warm-100 text-nordic-600 hover:bg-warm-200 dark:bg-night-700 dark:text-nordic-300 dark:hover:bg-night-600'}`}
+          >
+            Alle
+          </button>
+          {usedCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilter(filter === cat ? null : cat)}
+              className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+                         ${filter === cat
+                           ? 'bg-nordic-600 text-white dark:bg-nordic-500'
+                           : 'bg-warm-100 text-nordic-600 hover:bg-warm-200 dark:bg-night-700 dark:text-nordic-300 dark:hover:bg-night-600'}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Aktive projekter */}
       <div className="mb-8">

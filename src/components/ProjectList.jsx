@@ -3,9 +3,9 @@ import { supabase } from '../lib/supabase'
 
 function StatusBadge({ status }) {
   const styles = {
-    'Færdig': 'bg-green-50 text-green-700',
-    'I gang': 'bg-warm-50 text-warm-700',
-    'Oprettet': 'bg-nordic-50 text-nordic-600',
+    'Færdig': 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    'I gang': 'bg-warm-50 text-warm-700 dark:bg-warm-900/30 dark:text-warm-400',
+    'Oprettet': 'bg-nordic-50 text-nordic-600 dark:bg-nordic-900/30 dark:text-nordic-400',
   }
   const dots = {
     'Færdig': 'bg-green-500',
@@ -30,30 +30,32 @@ function ProjectCard({ project, onClick }) {
   return (
     <button
       onClick={() => onClick(project)}
-      className={`w-full text-left bg-white rounded-2xl shadow-sm border
+      className={`w-full text-left bg-white dark:bg-night-700 rounded-2xl shadow-sm border
                  hover:shadow-md transition-all p-5
-                 ${isDone ? 'border-green-100 hover:border-green-300' : 'border-warm-100 hover:border-warm-300'}`}
+                 ${isDone
+                   ? 'border-green-100 hover:border-green-300 dark:border-green-900/40 dark:hover:border-green-700'
+                   : 'border-warm-100 hover:border-warm-300 dark:border-night-600 dark:hover:border-night-500'}`}
     >
       <div className="flex items-center gap-4">
         <div className="text-3xl">{isDone ? '✅' : '🧶'}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="font-semibold text-nordic-800 text-lg truncate">
+            <h3 className="font-semibold text-nordic-800 dark:text-nordic-100 text-lg truncate">
               {project.title}
             </h3>
             <StatusBadge status={project.status || 'Oprettet'} />
           </div>
-          <p className="text-sm text-nordic-500">
+          <p className="text-sm text-nordic-500 dark:text-nordic-400">
             Pind {project.current_row}
             {project.total_rows ? ` af ${project.total_rows}` : ''}
           </p>
           {project.updated_at && (
-            <p className="text-xs text-nordic-400 mt-1">
+            <p className="text-xs text-nordic-400 dark:text-nordic-500 mt-1">
               Sidst strikket {new Date(project.updated_at).toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
           )}
           {progress !== null && (
-            <div className="w-full bg-warm-100 rounded-full h-2 mt-2">
+            <div className="w-full bg-warm-100 dark:bg-night-600 rounded-full h-2 mt-2">
               <div
                 className={`h-2 rounded-full transition-all ${isDone ? 'bg-green-400' : 'bg-warm-400'}`}
                 style={{ width: `${progress}%` }}
@@ -61,7 +63,7 @@ function ProjectCard({ project, onClick }) {
             </div>
           )}
         </div>
-        <div className="text-nordic-300 text-xl">&rsaquo;</div>
+        <div className="text-nordic-300 dark:text-nordic-500 text-xl">&rsaquo;</div>
       </div>
     </button>
   )
@@ -92,7 +94,7 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48 text-nordic-500">
+      <div className="flex items-center justify-center h-48 text-nordic-500 dark:text-nordic-400">
         Indlæser projekter...
       </div>
     )
@@ -102,10 +104,11 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
     return (
       <div className="text-center py-12">
         <div className="text-5xl mb-4">🧶</div>
-        <p className="text-nordic-500 mb-4">Ingen projekter endnu</p>
+        <p className="text-nordic-500 dark:text-nordic-400 mb-4">Ingen projekter endnu</p>
         <button
           onClick={onNewProject}
           className="px-6 py-3 rounded-xl bg-warm-500 hover:bg-warm-600
+                     dark:bg-nordic-600 dark:hover:bg-nordic-500
                      text-white font-semibold transition-colors"
         >
           + Opret dit første projekt
@@ -122,6 +125,7 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
       <button
         onClick={onNewProject}
         className="w-full mb-6 py-4 rounded-2xl bg-warm-500 hover:bg-warm-600
+                   dark:bg-nordic-600 dark:hover:bg-nordic-500
                    text-white font-semibold transition-colors text-lg shadow-sm
                    active:scale-95 transform"
       >
@@ -130,7 +134,7 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
 
       {/* Aktive projekter */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-nordic-800 mb-3 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-nordic-800 dark:text-nordic-100 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-warm-500" />
           Aktive projekter
           {active.length > 0 && (
@@ -139,7 +143,7 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
         </h2>
 
         {active.length === 0 ? (
-          <div className="text-center py-6 bg-white rounded-2xl border border-warm-100">
+          <div className="text-center py-6 bg-white dark:bg-night-700 rounded-2xl border border-warm-100 dark:border-night-600">
             <p className="text-nordic-400">Ingen aktive projekter</p>
           </div>
         ) : (
@@ -154,7 +158,7 @@ export default function ProjectList({ userId, onSelectProject, onNewProject }) {
       {/* Faerdige projekter */}
       {done.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-nordic-800 mb-3 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-nordic-800 dark:text-nordic-100 mb-3 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500" />
             Faerdige projekter
             <span className="text-sm font-normal text-nordic-400">({done.length})</span>

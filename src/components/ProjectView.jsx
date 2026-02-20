@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import PdfViewer from './PdfViewer'
 import RowCounter from './RowCounter'
 import ProjectNotes from './ProjectNotes'
+import ProjectPhoto from './ProjectPhoto'
 
 export default function ProjectView({ project, onBack, onDeleted }) {
   const [pdfPage, setPdfPage] = useState(1)
@@ -13,6 +14,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [wakeLockActive, setWakeLockActive] = useState(false)
+  const [images, setImages] = useState(project.images || [])
 
   const handleActivity = async () => {
     if (!statusRef.current || statusRef.current === 'Oprettet') {
@@ -114,6 +116,9 @@ export default function ProjectView({ project, onBack, onDeleted }) {
 
   const handleDelete = async () => {
     setDeleting(true)
+    if (images.length > 0) {
+      await supabase.storage.from('project-photos').remove(images)
+    }
     if (project.pdf_url) {
       await supabase.storage.from('recipes').remove([project.pdf_url])
     }
@@ -144,12 +149,12 @@ export default function ProjectView({ project, onBack, onDeleted }) {
       <div className="no-print">
         <button
           onClick={onBack}
-          className="text-nordic-500 hover:text-nordic-700 mb-4 font-medium"
+          className="text-nordic-500 hover:text-nordic-700 dark:text-nordic-400 dark:hover:text-nordic-200 mb-4 font-medium"
         >
           &larr; Mine projekter
         </button>
 
-        <h2 className="text-2xl font-bold text-nordic-800 mb-2">{project.title}</h2>
+        <h2 className="text-2xl font-bold text-nordic-800 dark:text-nordic-100 mb-2">{project.title}</h2>
 
         {wakeLockActive && (
           <p className="flex items-center gap-1.5 text-xs text-warm-400 mb-4">
@@ -167,7 +172,8 @@ export default function ProjectView({ project, onBack, onDeleted }) {
             <button
               onClick={handlePrint}
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl
-                         bg-nordic-600 hover:bg-nordic-700 text-white text-base font-semibold
+                         bg-nordic-600 hover:bg-nordic-700 dark:bg-nordic-700 dark:hover:bg-nordic-600
+                         text-white text-base font-semibold
                          transition-colors shadow-sm active:scale-95 transform"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -178,7 +184,8 @@ export default function ProjectView({ project, onBack, onDeleted }) {
             <button
               onClick={handleDownload}
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl
-                         bg-warm-500 hover:bg-warm-600 text-white text-base font-semibold
+                         bg-warm-500 hover:bg-warm-600 dark:bg-warm-700 dark:hover:bg-warm-600
+                         text-white text-base font-semibold
                          transition-colors shadow-sm active:scale-95 transform"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -207,6 +214,15 @@ export default function ProjectView({ project, onBack, onDeleted }) {
             onStatusChange={handleActivity}
           />
         </div>
+
+        {/* Projekt-billeder */}
+        <div className="mb-6">
+          <ProjectPhoto
+            projectId={project.id}
+            images={images}
+            onImagesChange={setImages}
+          />
+        </div>
       </div>
 
       {/* PDF viewer - synlig baade paa skaerm og i print */}
@@ -219,13 +235,13 @@ export default function ProjectView({ project, onBack, onDeleted }) {
       )}
 
       {project.pdf_url && !signedPdfUrl && (
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-8 text-center">
+        <div className="bg-white dark:bg-night-700 rounded-2xl shadow-sm border border-warm-100 dark:border-night-600 p-8 text-center">
           <p className="text-nordic-400">Indlaeser PDF...</p>
         </div>
       )}
 
       {!project.pdf_url && (
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-8 text-center">
+        <div className="bg-white dark:bg-night-700 rounded-2xl shadow-sm border border-warm-100 dark:border-night-600 p-8 text-center">
           <p className="text-nordic-400">Ingen PDF-opskrift tilknyttet dette projekt</p>
         </div>
       )}
@@ -235,7 +251,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
         {justCompleted && (
           <div className="text-center mb-4 animate-bounce">
             <span className="text-4xl">🎉</span>
-            <p className="text-green-600 font-bold text-lg mt-1">Tillykke! Projektet er færdigt!</p>
+            <p className="text-green-600 dark:text-green-400 font-bold text-lg mt-1">Tillykke! Projektet er færdigt!</p>
           </div>
         )}
         <button
@@ -243,7 +259,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl
                       text-lg font-semibold transition-all duration-300
                       ${status === 'Færdig'
-                        ? 'bg-green-50 border-2 border-green-200 text-green-700 hover:bg-green-100'
+                        ? 'bg-green-50 border-2 border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30'
                         : 'bg-green-500 hover:bg-green-600 text-white shadow-sm active:scale-95 transform'}`}
         >
           {status === 'Færdig' ? (
@@ -269,7 +285,9 @@ export default function ProjectView({ project, onBack, onDeleted }) {
         <button
           onClick={() => setShowConfirm(true)}
           className="px-6 py-2 rounded-xl border border-red-200 text-red-400
-                     hover:bg-red-50 hover:text-red-500 text-sm font-medium transition-colors"
+                     hover:bg-red-50 hover:text-red-500
+                     dark:border-red-900 dark:text-red-400 dark:hover:bg-red-900/20
+                     text-sm font-medium transition-colors"
         >
           Slet dette projekt
         </button>
@@ -278,18 +296,19 @@ export default function ProjectView({ project, onBack, onDeleted }) {
       {/* Bekraeftelses-popup */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
-            <p className="text-nordic-800 text-xl font-bold mb-2">
+          <div className="bg-white dark:bg-night-700 rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <p className="text-nordic-800 dark:text-nordic-100 text-xl font-bold mb-2">
               Vil du slette "{project.title}"?
             </p>
-            <p className="text-nordic-500 mb-6">
+            <p className="text-nordic-500 dark:text-nordic-400 mb-6">
               Det kan ikke fortrydes
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowConfirm(false)}
                 className="flex-1 py-3 rounded-xl bg-warm-100 hover:bg-warm-200
-                           text-nordic-700 text-lg font-semibold transition-colors"
+                           dark:bg-night-600 dark:hover:bg-night-500
+                           text-nordic-700 dark:text-nordic-200 text-lg font-semibold transition-colors"
               >
                 Nej, behold
               </button>

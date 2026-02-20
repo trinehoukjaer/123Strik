@@ -56,24 +56,24 @@ export default function RowCounter({ projectId, initialRow = 0, totalRows, onSta
   const progress = totalRows ? Math.round((count / totalRows) * 100) : null
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-warm-200">
+    <div className="bg-white dark:bg-night-700 rounded-2xl shadow-lg p-6 border border-warm-200 dark:border-night-600">
       <div className="text-center mb-4">
-        <h3 className="text-warm-700 font-semibold text-lg mb-1">Pindetæller</h3>
+        <h3 className="text-warm-700 dark:text-warm-400 font-semibold text-lg mb-1">Pindetæller</h3>
         {progress !== null && (
-          <div className="w-full bg-warm-100 rounded-full h-3 mb-2">
+          <div className="w-full bg-warm-100 dark:bg-night-600 rounded-full h-3 mb-2">
             <div
               className="bg-warm-500 h-3 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         )}
-        <p className="text-sm text-nordic-500">
+        <p className="text-sm text-nordic-500 dark:text-nordic-400">
           {totalRows ? `${count} af ${totalRows} pinde` : `${count} pinde`}
           {saving && <span className="ml-2 text-warm-400">Gemmer...</span>}
         </p>
       </div>
 
-      <div className="text-7xl font-bold text-nordic-800 text-center my-6 tabular-nums">
+      <div className="text-7xl font-bold text-nordic-800 dark:text-nordic-100 text-center my-6 tabular-nums">
         {count}
       </div>
 
@@ -81,7 +81,8 @@ export default function RowCounter({ projectId, initialRow = 0, totalRows, onSta
         <button
           onClick={decrement}
           className="w-20 h-20 rounded-2xl bg-warm-100 hover:bg-warm-200
-                     text-warm-800 text-3xl font-bold transition-colors
+                     dark:bg-night-600 dark:hover:bg-night-500
+                     text-warm-800 dark:text-warm-300 text-3xl font-bold transition-colors
                      active:scale-95 transform"
         >
           &minus;
@@ -89,6 +90,7 @@ export default function RowCounter({ projectId, initialRow = 0, totalRows, onSta
         <button
           onClick={increment}
           className="w-32 h-20 rounded-2xl bg-warm-500 hover:bg-warm-600
+                     dark:bg-nordic-600 dark:hover:bg-nordic-500
                      text-white text-3xl font-bold transition-colors shadow-md
                      active:scale-95 transform"
         >
@@ -97,7 +99,8 @@ export default function RowCounter({ projectId, initialRow = 0, totalRows, onSta
         <button
           onClick={reset}
           className="w-20 h-20 rounded-2xl bg-nordic-100 hover:bg-nordic-200
-                     text-nordic-600 text-sm font-semibold transition-colors
+                     dark:bg-night-600 dark:hover:bg-night-500
+                     text-nordic-600 dark:text-nordic-300 text-sm font-semibold transition-colors
                      active:scale-95 transform"
         >
           Nulstil

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-warm-50: #fdf8f6;
   --color-warm-100: #f2e8e5;
@@ -22,6 +24,12 @@
   --color-nordic-700: #334e68;
   --color-nordic-800: #243b53;
   --color-nordic-900: #102a43;
+
+  --color-night-900: #141926;
+  --color-night-800: #1c2133;
+  --color-night-700: #252b3b;
+  --color-night-600: #323a4e;
+  --color-night-500: #3f4963;
 }
 
 body {
@@ -30,6 +38,12 @@ body {
   background-color: var(--color-warm-50);
   color: var(--color-nordic-900);
   min-height: 100dvh;
+}
+
+.dark body,
+:where(.dark) body {
+  background-color: var(--color-night-900);
+  color: #e2e8f0;
 }
 
 @page {

@@ -44,12 +44,8 @@ export default function ProjectView({ project, onBack, onDeleted }) {
       .eq('id', project.id)
   }
 
-  const handleActivity = async () => {
-    if (!statusRef.current || statusRef.current === 'Oprettet') {
-      setStatus('I gang')
-      statusRef.current = 'I gang'
-      await supabase.from('knitting_projects').update({ status: 'I gang' }).eq('id', project.id)
-    }
+  const handleActivity = () => {
+    // Status styres manuelt fra dashboardet
   }
 
   const [justCompleted, setJustCompleted] = useState(false)
@@ -179,7 +175,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
           onClick={onBack}
           className="text-nordic-500 hover:text-nordic-700 dark:text-nordic-400 dark:hover:text-nordic-200 mb-4 font-medium"
         >
-          &larr; Mine projekter
+          &larr; Mine strik
         </button>
 
         <h2 className="text-2xl font-bold text-nordic-800 dark:text-nordic-100 mb-1">{project.title}</h2>
@@ -323,7 +319,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
 
       {!project.pdf_url && (
         <div className="bg-white dark:bg-night-700 rounded-2xl shadow-sm border border-warm-100 dark:border-night-600 p-8 text-center">
-          <p className="text-nordic-400">Ingen PDF-opskrift tilknyttet dette projekt</p>
+          <p className="text-nordic-400">Ingen PDF-opskrift tilknyttet dette strik</p>
         </div>
       )}
 
@@ -332,7 +328,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
         {justCompleted && (
           <div className="text-center mb-4 animate-bounce">
             <span className="text-4xl">🎉</span>
-            <p className="text-green-600 dark:text-green-400 font-bold text-lg mt-1">Tillykke! Projektet er færdigt!</p>
+            <p className="text-green-600 dark:text-green-400 font-bold text-lg mt-1">Tillykke! Dit strik er færdigt!</p>
           </div>
         )}
         <button
@@ -348,7 +344,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Gendan som aktivt projekt
+              Gendan som aktivt strik
             </>
           ) : (
             <>
@@ -370,7 +366,7 @@ export default function ProjectView({ project, onBack, onDeleted }) {
                      dark:border-red-900 dark:text-red-400 dark:hover:bg-red-900/20
                      text-sm font-medium transition-colors"
         >
-          Slet dette projekt
+          Slet dette strik
         </button>
       </div>
 

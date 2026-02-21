@@ -65,7 +65,7 @@ export default function Auth() {
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🧶</div>
           <h1 className="text-3xl font-bold text-nordic-800 dark:text-nordic-100">123Strik</h1>
-          <p className="text-nordic-500 dark:text-nordic-400 mt-1">Hold styr på dine strikkeprojekter</p>
+          <p className="text-nordic-500 dark:text-nordic-400 mt-1">Hold styr på dit strik</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white dark:bg-night-700 rounded-2xl shadow-lg p-6 space-y-4">

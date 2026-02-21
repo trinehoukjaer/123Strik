@@ -21,7 +21,7 @@ export default function OfflineIndicator() {
   if (!offline) return null
 
   return (
-    <div className="no-print fixed bottom-4 left-4 right-4 z-50 flex justify-center">
+    <div className="no-print fixed bottom-20 left-4 right-4 z-50 flex justify-center">
       <div className="bg-nordic-800 dark:bg-night-700 dark:border dark:border-night-500
                       text-white px-5 py-3 rounded-2xl shadow-lg
                       flex items-center gap-2 text-sm font-medium max-w-md">

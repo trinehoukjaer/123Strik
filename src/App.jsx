@@ -7,6 +7,8 @@ import ProjectList from './components/ProjectList'
 import ProjectView from './components/ProjectView'
 import NewProject from './components/NewProject'
 import OfflineIndicator from './components/OfflineIndicator'
+import BottomNav from './components/BottomNav'
+import Strikkelager from './components/Strikkelager'
 
 function ThemeToggle() {
   const { dark, toggle } = useTheme()
@@ -36,6 +38,8 @@ function AppContent() {
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState('list') // 'list' | 'project' | 'new'
   const [selectedProject, setSelectedProject] = useState(null)
+  const [activeTab, setActiveTab] = useState('dashboard') // 'dashboard' | 'inventory'
+  const [inventoryView, setInventoryView] = useState('home') // 'home' | 'yarn' | 'needles' | 'swatches' | 'recipes'
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -96,43 +100,65 @@ function AppContent() {
       </header>
 
       {/* Content */}
-      <main className="max-w-2xl mx-auto px-4 py-6">
-        {view === 'list' && (
-          <ProjectList
-            userId={session.user.id}
-            onSelectProject={(project) => {
-              setSelectedProject(project)
-              setView('project')
-            }}
-            onNewProject={() => setView('new')}
-          />
+      <main className="max-w-2xl mx-auto px-4 py-6 pb-24">
+        {activeTab === 'dashboard' && (
+          <>
+            {view === 'list' && (
+              <ProjectList
+                userId={session.user.id}
+                onSelectProject={(project) => {
+                  setSelectedProject(project)
+                  setView('project')
+                }}
+                onNewProject={() => setView('new')}
+              />
+            )}
+
+            {view === 'project' && selectedProject && (
+              <ProjectView
+                project={selectedProject}
+                onBack={() => {
+                  setView('list')
+                  setSelectedProject(null)
+                }}
+                onDeleted={() => {
+                  setView('list')
+                  setSelectedProject(null)
+                }}
+              />
+            )}
+
+            {view === 'new' && (
+              <NewProject
+                userId={session.user.id}
+                onCreated={(project) => {
+                  setSelectedProject(project)
+                  setView('project')
+                }}
+                onCancel={() => setView('list')}
+              />
+            )}
+          </>
         )}
 
-        {view === 'project' && selectedProject && (
-          <ProjectView
-            project={selectedProject}
-            onBack={() => {
-              setView('list')
-              setSelectedProject(null)
-            }}
-            onDeleted={() => {
-              setView('list')
-              setSelectedProject(null)
-            }}
-          />
-        )}
-
-        {view === 'new' && (
-          <NewProject
+        {activeTab === 'inventory' && (
+          <Strikkelager
             userId={session.user.id}
-            onCreated={(project) => {
-              setSelectedProject(project)
-              setView('project')
-            }}
-            onCancel={() => setView('list')}
+            inventoryView={inventoryView}
+            onViewChange={setInventoryView}
           />
         )}
       </main>
+      <BottomNav activeTab={activeTab} onTabChange={(tab) => {
+        setActiveTab(tab)
+        if (tab === 'dashboard') {
+          setView('list')
+          setSelectedProject(null)
+        }
+        if (tab === 'inventory') {
+          setInventoryView('home')
+        }
+      }} />
       <OfflineIndicator />
     </div>
   )

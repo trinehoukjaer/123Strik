@@ -67,7 +67,7 @@ export default function ProjectNotes({ projectId, initialNotes = '', onStatusCha
         ref={textareaRef}
         value={notes}
         onChange={handleChange}
-        placeholder="Her kan du skrive dine noter til projektet (f.eks. pindestørrelse, farvekode eller ændringer)..."
+        placeholder="Her kan du skrive dine noter til dit strik (f.eks. pindestørrelse, farvekode eller ændringer)..."
         rows={4}
         className="w-full px-4 py-3 rounded-xl border-2 border-warm-100 bg-warm-50
                    dark:border-night-600 dark:bg-night-800 dark:text-nordic-100
